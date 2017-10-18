@@ -1,0 +1,5 @@
+{
+    "match" : ["news","dr","via","@nih","@aacr","#cbi16","dr."],
+    "contain" : ["cdc","center","aapca","vaccinechoice","acip","cbi16"],
+    "sentence_check" : ["study shows", "studies show", "learn more","research shows"]
+}

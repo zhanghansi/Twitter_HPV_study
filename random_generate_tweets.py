@@ -17,7 +17,7 @@ import csv
 import common
 import random
 
-fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','classifier','senti']
+fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','class']
 # fieldnames = ['id','label','raw_text', 'text']
 def to_csv(tweets, csv_output_file):
         with open(csv_output_file, 'w', newline='', encoding='utf-8') as csv_f:#, open(txt_output_file, 'w', newline='', encoding='utf-8') as txt_f:
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     logger.info(samples_number)
     sample_data = []
     result = []
-    with open('./intermediate_data/hpv_geotagged.csv', 'r', newline='', encoding='utf-8') as csv_f:
+    with open('./intermediate_data/classified_hpv.csv', 'r', newline='', encoding='utf-8') as csv_f:
         reader = csv.DictReader(csv_f)
         for row in reader:
             # if 'health' in row['text'].lower():

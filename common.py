@@ -52,8 +52,9 @@ def alpha_and_number_only(text):
 
 def sanitize_text(text):
     # text = re.sub(non_ascii_p, '', text)
-    text = re.sub(r"/"," / ", text, flags=FLAGS)
-    return remove_hashtag_sign(remove_username(remove_url(clean_tweet_text(text))))
+    # text = re.sub(r"/"," / ", text, flags=FLAGS)
+    text = remove_hashtag_sign(remove_username(remove_url(clean_tweet_text(text))))
+    return re.sub(r"/"," / ", text, flags=FLAGS)
 
 def has_url(text):
 

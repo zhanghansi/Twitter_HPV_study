@@ -19,6 +19,7 @@ import Arun2010
 import CaoJuan2009
 import Deveaud2014
 import csv
+import random_generate_tweets
 
 import operator
 
@@ -77,8 +78,8 @@ def load_data(csv_file, text_fields = []):
         for text_field in text_fields:
             #logger.info(pd.isnull(r[text_field]))
             if(pd.notnull(r[text_field])):
-                # document = '%s  %s'%(document, common.cleanhtml(common.remove_hashtag_sign(common.remove_username(common.remove_url(ftfy.fix_text(r[text_field]))))))
-                document = '%s  %s'%(document, r[text_field])
+                document = '%s  %s'%(document, common.cleanhtml(common.remove_hashtag_sign(common.remove_username(common.remove_url(ftfy.fix_text(r[text_field]))))))
+                # document = '%s  %s'%(document, r[text_field])
 
         documents.append(document)
 
@@ -91,12 +92,6 @@ def load_data(csv_file, text_fields = []):
 
     texts = [[wordnet_lemmatizer.lemmatize(word.lower()) for word in nltk.regexp_tokenize(document, pattern) if wordnet_lemmatizer.lemmatize(word.lower()) not in stoplist] for document in documents]
 
-    # for text in texts:
-    #     while ("vaccine" in text):
-    #         text.remove('vaccine')
-    #     while ("cancer" in text):
-    #         text.remove('vaccine')
-        # logger.info(text)
 
     # # quit()
 
@@ -126,7 +121,7 @@ def train_num_of_topics(dictionary, corpus, ranges, output_figure):
     number_of_words = sum(cnt for document in test_corpus for _, cnt in document)
     for num_topics in num_topics_list:
 
-        lda = gensim.models.ldamodel.LdaModel(corpus=train_corpus, id2word=dictionary, num_topics=num_topics, eval_every=10, alpha='auto', chunksize=10000, passes=10)
+        lda = gensim.models.ldamodel.LdaModel(corpus=train_corpus, id2word=dictionary, num_topics=num_topics, eval_every=10, alpha='auto', chunksize=10000, passes=20, iterations = 500)
 
         perplex = lda.bound(test_corpus)
         #logger.info(perplex)
@@ -151,10 +146,10 @@ def train_num_of_topics(dictionary, corpus, ranges, output_figure):
     plt.savefig(output_figure, format='png', bbox_inches='tight', pad_inches=0.1)
     #plt.show()
 
-def lda_train(dictionary, corpus, num_topics = 15):
+def lda_train(dictionary, corpus, num_topics):
     number_of_words = sum(cnt for document in corpus for _, cnt in document)
 
-    lda = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topics, eval_every=10, alpha='auto', chunksize=10000, passes=10)
+    lda = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topics, eval_every=10, alpha='auto', chunksize=10000, passes=20, iterations = 500)
 
     lda.print_topics(num_topics=num_topics)
     return lda
@@ -176,18 +171,6 @@ def highlight_color_func(word, highlight_words, font_path, font_size, position, 
 def grey_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
     return "hsl(0, 0%%, %d%%)" % random.randint(10, 40)
 
-# def wordcloud(topics, output_figure):
-#     from wordcloud import WordCloud
-#     import matplotlib.pyplot as plt
-
-#     for label, freqs in topics:
-#         wordcloud = WordCloud(margin=5,random_state=1,background_color='white').fit_words(freqs)
-#         logger.info(wordcloud)
-#         plt.figure()
-#         plt.imshow(wordcloud.recolor(color_func=grey_color_func, random_state=3))
-#         plt.axis("off")
-#         plt.savefig("%s.%s.tagcloud.png"%(output_figure, label))
-#         plt.close('all')
 
 def wordcloud(topics=[]):
     from wordcloud.wordcloud import WordCloud
@@ -199,15 +182,16 @@ def wordcloud(topics=[]):
         highlight_words = [];
         wordcloud = WordCloud(color_func = grey_color_func, random_state=1, margin=10, background_color='white').fit_words(freqs)
         # wordcloud.to_file("./all_data/figures/adv_in_nj/hpv.%s.tagcloud.png"%(label))
-        wordcloud.to_file("./intermediate_data/laypeople/30tp/hpv.%s.tagcloud.png"%(label))
-
+        # wordcloud.to_file("./intermediate_data/promotional/25tp/hpv.%s.tagcloud.png"%(label))
+        # wordcloud.to_file("./intermediate_data/laypeople/15tp/hpv.%s.tagcloud.png"%(label))
+        wordcloud.to_file("./intermediate_data/hpv_tweets/35tp/hpv.%s.tagcloud.png"%(label))
 def fix_utf8(csv_file):
 
     with open(csv_file, 'rb') as rf, open('%s.fixed.utf-8'%csv_file, 'w', encoding='utf-8') as wf:
         f = rf.read().decode('utf-8', 'ignore')
         wf.write(ftfy.fix_text(f))
 
-fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','classifier','topic']
+fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','class','is_quote_status','topic']
 def to_csv(tweets, csv_output_file):
         with open(csv_output_file, 'w', newline='', encoding='utf-8') as csv_f:#, open(txt_output_file, 'w', newline='', encoding='utf-8') as txt_f:
             writer = csv.DictWriter(csv_f, fieldnames=fieldnames, delimiter=',', quoting=csv.QUOTE_ALL)
@@ -216,12 +200,30 @@ def to_csv(tweets, csv_output_file):
 
                 writer.writerow(tweet)
 
-def topic_distribution(lda_model, dictionary, path):
+fieldnames_annotate_themes = ['topic_id', 'tweets','probability']
+def to_csv_annotate_template(topic_result, prob, csv_output_file):
+        with open(csv_output_file, 'w', newline='', encoding='utf-8') as csv_f:#, open(txt_output_file, 'w', newline='', encoding='utf-8') as txt_f:
+            writer = csv.DictWriter(csv_f, fieldnames=fieldnames_annotate_themes, delimiter=',', quoting=csv.QUOTE_ALL)
+            writer.writeheader()
+            for tid in topic_result:
+                prob_ranked = sorted(prob[tid],reverse=True)
+                for i in range(10):
+                    writer.writerow({
+                        'topic_id' : tid,
+                        'tweets' : topic_result[tid][prob_ranked[i]],
+                        'probability': prob_ranked[i]
+                    })
+
+
+def topic_annotation(lda_model, dictionary, path, csv_output_file):
     tweets = []
     with open(path, 'r', newline='', encoding='utf-8') as csv_f:
         reader = csv.DictReader(csv_f)
         # prob_result = []
+        topic_result = {}
         cnt = 0
+        prob = {}
+        test = []
         for row in reader:
             stoplist = load_stoplist()
             wordnet_lemmatizer = WordNetLemmatizer()
@@ -230,23 +232,71 @@ def topic_distribution(lda_model, dictionary, path):
             doc_lda = lda_model[doc_bow]
             row['topic'] = []
             # logger.info(doc_lda)
+            cnt += 1
+            # logger.info(cnt)
             for tp in doc_lda:
-                if tp[1] >= 0.25:
-                # if tp[1] >= 0.35 and tp[1] < 0.4:
-                    # logger.info(row['text'])
-                    # logger.info(tp[0])
+                if tp[1] > 0.3:
+                    if tp[0] not in topic_result:
+                        topic_result[tp[0]] = {float(tp[1]) : row['clean_text']}
+                        prob[tp[0]] = [float(tp[1])]
+                        test.append(row['clean_text'])
+                    else:
+                        if row['clean_text'] not in test:
+                            prob[tp[0]].append(float(tp[1]))
+                            topic_result[tp[0]][float(tp[1])] = row['clean_text']
+                            test.append(row['clean_text'])
+        for tid in topic_result:
+            if tid ==1 or tid == 10 or tid == 13 or tid == 12:
+                logger.info(tid)
+                logger.info(topic_result[tid])
+        # to_csv_annotate_template(topic_result, prob, csv_output_file)
+        # logger.info(cnt)
+
+def topic_distribution(lda_model, dictionary, path, csv_output_file):
+    tweets = []
+    with open(path, 'r', newline='', encoding='utf-8') as csv_f:
+        reader = csv.DictReader(csv_f)
+        # prob_result = []
+        cnt = 0
+        total = 0
+        for row in reader:
+            text = [word for word in row['clean_text']]
+            doc_bow = dictionary.doc2bow(text)
+            doc_lda = lda_model[doc_bow]
+            row['topic'] = []
+            total += 1
+            for tp in doc_lda:
+                if tp[1] >= 0.15 :
                     row['topic'].append(tp[0])
-            # if len(row['topic']) >= 2:
-            #     cnt += 1
             if len(row['topic']) != 0 :
                 cnt += 1
             tweets.append(row)
-            # if cnt == 5000:
-            #     break
-            # logger.info(topic_id)
-            # prob_result.append(max_prob)
-        to_csv(tweets, './intermediate_data/promotional/cutoffline/promotional_topics_0.25.csv')
+        to_csv(tweets, csv_output_file)
+        logger.info(total)
         logger.info(cnt)
+
+def infer_pz_d(k,lda_model,dictionary,input_folder,output_folder):
+    for i in range(k):
+        pz_d = []
+        with open(input_folder + str(i) + 'tp.csv', 'r', newline='', encoding='utf-8') as csv_f:
+            reader = csv.DictReader(csv_f)
+            for row in reader:
+                stoplist = load_stoplist()
+                wordnet_lemmatizer = WordNetLemmatizer()
+                text = [wordnet_lemmatizer.lemmatize(word.lower()) for word in nltk.regexp_tokenize(row['clean_text'], pattern) if wordnet_lemmatizer.lemmatize(word.lower()) not in stoplist]
+                doc_bow = dictionary.doc2bow(text)
+                doc_lda = lda_model[doc_bow]
+                topic_distribution = [0] * k
+                for tp in doc_lda:
+                    topic_distribution[tp[0]] = tp[1]
+                pz_d.append(topic_distribution)
+        with open(output_folder + str(i) + 'tp.txt', "w") as text_file:
+            for line in pz_d:
+                result = ''
+                for p in line:
+                    result += str(p) + ' '
+                text_file.write(result)
+                text_file.write('\n')
 
 
 def plot_topics(x,c_y,d_y,a_y):
@@ -263,7 +313,7 @@ def find_topics(dictionary, corpus, topics):
     d_y = []
     c_y = []
     for num_topic in topics:
-        model = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topic, eval_every=10, alpha='auto', chunksize=10000, passes=10)
+        model = gensim.models.ldamodel.LdaModel(corpus=corpus, id2word=dictionary, num_topics=num_topic, eval_every=10, alpha='auto', chunksize=10000, passes=5)
         a_y.append(Arun2010.FindTopicsNumber(dictionary, corpus, num_topic, model))
         d_y.append(Deveaud2014.FindTopicsNumber(dictionary, corpus, num_topic, model))
         c_y.append(CaoJuan2009.FindTopicsNumber(dictionary, corpus, num_topic, model))
@@ -302,9 +352,10 @@ if __name__ == "__main__":
 
 
     # twitter data
-    # BASE = './all_data/Data_state/NJ/NJ_ad'
-    BASE = './intermediate_data/laypeople/laypeople'
+    # BASE = './intermediate_data/laypeople/laypeople'
+    # BASE = './intermediate_data/hpv_tweets/hpv_tweets'
     # BASE = './intermediate_data/promotional/promotional'
+    BASE = './intermediate_data/LDA_BTM_comparison/LDA/lda_BTM_comparison_traning_data'
     INPUT = '%s.csv'%BASE
     TEXT_FIELDS = ['clean_text']
     SOURCE = 'twitter'
@@ -325,7 +376,7 @@ if __name__ == "__main__":
     # Step 2:
     # dictionary = corpora.Dictionary.load(DICT)
     # corpus = corpora.MmCorpus(MM)
-    # find_topics(dictionary, corpus, range(20, 80, 3))
+    # find_topics(dictionary, corpus, range(15, 80, 4))
     # train_num_of_topics(dictionary, corpus, range(10, 40, 1), '%s.train_num_of_topics_by_perplexity.png'%INPUT)
     # quit()
 
@@ -333,19 +384,28 @@ if __name__ == "__main__":
     dictionary = corpora.Dictionary.load(DICT)
     corpus = corpora.MmCorpus(MM)
 
-    num_topics = 30
-    lda = lda_train(dictionary, corpus, num_topics = num_topics)
+    num_topics = 11
+    # lda = lda_train(dictionary, corpus, num_topics = num_topics)
     MODEL = '%s.%d.lda.model'%(BASE,num_topics)
-    lda.save(MODEL)
+    # lda.save(MODEL)
 
-    # lda = gensim.models.ldamodel.LdaModel.load(MODEL)
+    lda = gensim.models.ldamodel.LdaModel.load(MODEL)
 
     # wordcloud(lda.show_topics(num_topics=num_topics, formatted=False), './figures/%s'%(SOURCE))
     # wordcloud(topics=lda.show_topics(num_topics=num_topics, formatted=False))
     # quit()
     # topics=lda.show_topics(num_topics=num_topics, num_words=10, formatted=False)
     # logger.info(topics)
-    # to_csv_topic_stats(topics,'./intermediate_data/analysis/laypeople_topics_keywords_stats.csv')
+    # to_csv_topic_stats(topics,'./intermediate_data/analysis/laypeople_topics_keywords_stats_15.csv')
 
-    # step 4: lda_distribution
-    # topic_distribution(lda,dictionary,'./intermediate_data/promotional/promotional.csv')
+    # step 4: topic_annotation
+    # topic_annotation(lda,dictionary,'./intermediate_data/laypeople/laypeople.csv','./intermediate_data/laypeople/15tp/annotation.csv', )
+    # topic_annotation(lda,dictionary,'./intermediate_data/promotional/promotional.csv','./intermediate_data/promotional/20tp/annotation.csv', )
+
+    #step 5: topic_distribution
+    # topic_distribution(lda,dictionary,'./intermediate_data/promotional/promotional.csv', './intermediate_data/promotional/cutoffline/0.085.csv')
+    # topic_distribution(lda,dictionary,'./intermediate_data/laypeople/laypeople.csv','./intermediate_data/laypeople/20tp_cutoffline/0.3all.csv', )
+    # topic_distribution(lda,dictionary,'./intermediate_data/hpv_tweets/random_100.csv','./intermediate_data/hpv_tweets/cutoffline/0.15_30tp.csv', )
+
+    #step 6: infer p(z|d) for each doc
+    infer_pz_d(num_topics,lda,dictionary,'./intermediate_data/LDA_BTM_comparison/sample_cluster_csv/','./intermediate_data/LDA_BTM_comparison/LDA/topics_distribution_cluster/')

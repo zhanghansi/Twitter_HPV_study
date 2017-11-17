@@ -28,6 +28,8 @@ raw_data/
 geocoding/
 intermediate_data/
 intermediate_data.zip
+observation.txt
+BTM/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

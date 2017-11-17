@@ -50,9 +50,13 @@ Our data sets are saved on s3 (`s3://ji0ng.bi0n.twitter/hpv/`) collected from 3 
         * number of tweets after geo-coding: 271533
 
 * Rule-based categorization
-    * `classifier.py`: classify the rest of the tweets into `promotional HPV related` (210418 tweets) and `laypeople's discussions` (61676 tweets)
+    * `classifier.py`: classify the rest of the tweets into `promotional HPV related` (205,945 tweets) and `laypeople's discussions` (65,588 tweets)
 
 ### Topic modeling
+* sample size for comparison between LDA and BTM: 15835
+    * H_score:
+      * BTM: inter: 0.248297, intra: 0.476651 (0.52092)
+      * LDA: inter: 0.3462722 , intra: 0.458076 （0.75593）
 
 * lda.py: This code serves two functions:
     * 1: Test different statistical model (Arun2010, CaoJuan2009, Deveaud2014)

@@ -93,8 +93,8 @@ def filter_raw(raw_json_data_folder):
                                     'created_at': tweet['created_at'],
                                     'username': tweet['user']['name'],
                                     'user_id': tweet['user']['id'],
+                                    'is_quote_status': tweet['is_quote_status']
                                     })
-
                         except Exception as exc:
                             logger.info(line)
                             logger.warn('ignore: %s'%(exc))
@@ -103,7 +103,7 @@ def filter_raw(raw_json_data_folder):
 
     return tweets
 
-fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id']
+fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','is_quote_status']
 # fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'created_at', 'username', 'user_id']
 def to_csv(tweets, csv_output_file):
     #tweets = []

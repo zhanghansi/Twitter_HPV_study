@@ -131,8 +131,10 @@ didn't
 different
 do
 does
+doesn
 doesn't
 doing
+don
 don't
 done
 down
@@ -197,6 +199,7 @@ had
 hadn't
 happens
 hardly
+ha
 has
 hasn't
 have
@@ -225,6 +228,9 @@ hopefully
 how
 howbeit
 however
+ht
+htt
+http
 i
 i'd
 i'll
@@ -264,6 +270,7 @@ know
 knows
 known
 l
+ll
 last
 lately
 later
@@ -512,6 +519,7 @@ using
 usually
 uucp
 v
+ve
 value
 various
 very
@@ -519,6 +527,7 @@ via
 viz
 vs
 w
+wa
 want
 wants
 was

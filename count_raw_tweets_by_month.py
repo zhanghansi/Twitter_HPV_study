@@ -24,6 +24,7 @@ def filter_raw(raw_json_data_folder):
     tweetIds = set()
     cnt_total_no_duplicate =0
     duplicated_cnt=0
+    cnt = 0
     for root, dirs, files in os.walk(os.path.abspath(raw_json_data_folder)):
         for f in files:
             if (f != 'search.json' and not f.startswith('.')):
@@ -36,12 +37,10 @@ def filter_raw(raw_json_data_folder):
                         try:
                             if (line.startswith('{')):
                                 tweet = json.loads(line)
-
                                 if (int(tweet['id']) in tweetIds):
                                     duplicated_cnt += 1
                                     continue
                                 cnt_total_no_duplicate += 1
-
                                 tweets.append({
                                     'id': tweet['id'],
                                     'created_at': tweet['created_at']
@@ -90,16 +89,17 @@ def count_tweets_by_month(source):
     return result
 
 def plot_trend(source):
-    fields = ['year/month','tweets']
-    df = pd.read_csv(source,usecols=fields)
-    names = df['year/month']
-    data = df['tweets']
+    fields = ['year-month','tweets_new']
+    df = pd.read_csv(source,usecols=fields,encoding='utf-8')
+    names = df['year-month']
+    data = df['tweets_new'].dropna()
+    logger.info(data)
     ax = plt.subplot(111)
     width=0.5
     bins = list(map(lambda x: x-width/2,range(1,len(data)+1)))
     ax.bar(bins,data,width=width,color='k',align='edge')
     ax.set_xticks(list(map(lambda x: x, range(1,len(data)+1))))
-    ax.set_xticklabels(names,rotation=90)
+    ax.set_xticklabels(names,rotation=0)
     plt.ylabel('number of tweets')
     plt.xlabel('year/month')
     plt.show()
@@ -107,7 +107,7 @@ def plot_trend(source):
 if __name__ == "__main__":
 
     #step 1: generate no duplicate tweets csv file
-    # tweets = filter_raw('./raw_data/')
+    # tweets = filter_raw('./raw_data')
     # to_csv(tweets, './intermediate_data/raw_tweets_time.csv')
 
     #step 2: count tweets by month

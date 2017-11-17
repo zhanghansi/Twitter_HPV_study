@@ -172,11 +172,10 @@ def calculate_h_score(k):
         inter_dis += (1 / ((1 + k) * k)) * iteration
     print(inter_dis)
     return intra_dis / inter_dis
-    # return (0.346272289743 / inter_dis)
 
 
 if __name__ == '__main__':
-    k = 25
+    k = sys.argv[1]
     #step 1 generate clusters for gold standard
     # group_tweets_by_cluster_gold_standard('./intermediate_data/hpv_tweets/hpv_tweets_not_by_uid.txt', k)
 
@@ -189,6 +188,9 @@ if __name__ == '__main__':
     #step 3 generate pz_d manually for each document BTM
 
 
-    #step 4 H score
+    # #step 4 H score
     h_score = calculate_h_score(k)
-    print(h_score)
+    with open('./H_score.txt', 'a') as f:
+        f.write(str(k) + ':')
+        f.write(h_score)
+        f.write('\n')

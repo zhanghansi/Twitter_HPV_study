@@ -193,5 +193,5 @@ if __name__ == '__main__':
     h_score = calculate_h_score(k)
     with open('./H_score.txt', 'a') as f:
         f.write(str(k) + ':')
-        f.write(h_score)
+        f.write(str(h_score))
         f.write('\n')

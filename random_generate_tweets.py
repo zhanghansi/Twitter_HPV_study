@@ -97,5 +97,5 @@ if __name__ == "__main__":
 
 
     # random generate pz_d for BTM
-    k = 25
-    random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./intermediate_data/BTM/sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)
+    k = 40
+    random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)

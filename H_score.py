@@ -136,7 +136,7 @@ def calculate_h_score(k):
     clusters = []
     for i in range(k):
         # with open('./BTM/output/' + str(k) + 'tp/topics_distribution_cluster/tp' + str(i)+ '.pz_d','r') as pz_d:
-        with open('./intermediate_data/BTM/sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/tp' + str(i)+ '.pz_d','r') as pz_d:
+        with open('./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/tp' + str(i)+ '.pz_d','r') as pz_d:
             cluster = []
             for line in pz_d:
                 temp = []
@@ -189,6 +189,7 @@ if __name__ == '__main__':
 
 
     # #step 4 H score
+    k = int(k)
     h_score = calculate_h_score(k)
     with open('./H_score.txt', 'a') as f:
         f.write(str(k) + ':')

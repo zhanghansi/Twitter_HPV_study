@@ -144,33 +144,24 @@ def calculate_h_score(k):
                     temp.append(float(p))
                 cluster.append(temp)
         clusters.append(cluster)
-    print("number of topics : " + str(k))
-    print('intra_dis:')
+
     intra_dis = 0
     for t in range(k):
         iteration = 0
-        print(t)
         for i in range(len(clusters[t])):
             for j in range(i+1,len(clusters[t])):
                 iteration += 2 * dis(clusters[t][i],clusters[t][j]) / (len(clusters[t]) * (len(clusters[t]) - 1))
         intra_dis += (1 / (k + 1)) * iteration
-    print(intra_dis)
 
-    print('inter_dis:')
     inter_dis = 0
     for t1 in range(k):
         iteration = 0
-        print('t1')
-        print(t1)
         for t2 in range(k):
             if (t2 != t1):
-                print('t2')
-                print(t2)
                 for i in range(len(clusters[t1])):
                     for j in range(len(clusters[t2])):
                         iteration += dis(clusters[t1][i],clusters[t2][j]) / (len(clusters[t1]) * len(clusters[t2]))
         inter_dis += (1 / ((1 + k) * k)) * iteration
-    print(inter_dis)
     return intra_dis / inter_dis
 
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # run an toy example for BTM
 
 K=12   # number of topics

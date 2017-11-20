@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # run an toy example for BTM
 for K in $(seq 12 14)
 do

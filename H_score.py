@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 #coding=utf-8
 
+
+import logging
+import logging.handlers
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
+
 import sys
 import numpy as np
 import os
@@ -16,7 +23,9 @@ import math
 from scipy import stats
 from nltk.stem import WordNetLemmatizer
 from multiprocessing import Pool
-
+import concurrent.futures
+import functools
+import multiprocessing as mp
 
 pattern=r'[A-Z]\.+\S+|\w+\-\w+|\w+'
 
@@ -132,7 +141,7 @@ def dis(di,dj):
     dis = 0.5 * (k_l_l + k_l_r)
     return dis
 
-def calculate_h_score(k):
+def calculate_h_score_worker(k):
     clusters = []
     for i in range(k):
         # with open('./BTM/output/' + str(k) + 'tp/topics_distribution_cluster/tp' + str(i)+ '.pz_d','r') as pz_d:
@@ -144,7 +153,7 @@ def calculate_h_score(k):
                     temp.append(float(p))
                 cluster.append(temp)
         clusters.append(cluster)
-
+    logger.info(k)
     intra_dis = 0
     for t in range(k):
         iteration = 0
@@ -153,20 +162,57 @@ def calculate_h_score(k):
                 iteration += 2 * dis(clusters[t][i],clusters[t][j]) / (len(clusters[t]) * (len(clusters[t]) - 1))
         intra_dis += (1 / (k + 1)) * iteration
 
-    inter_dis = 0
-    for t1 in range(k):
-        iteration = 0
-        for t2 in range(k):
-            if (t2 != t1):
-                for i in range(len(clusters[t1])):
-                    for j in range(len(clusters[t2])):
-                        iteration += dis(clusters[t1][i],clusters[t2][j]) / (len(clusters[t1]) * len(clusters[t2]))
-        inter_dis += (1 / ((1 + k) * k)) * iteration
-    return intra_dis / inter_dis
+    inter_dis = 1
+    # for t1 in range(k):
+    #     iteration = 0
+    #     for t2 in range(k):
+    #         if (t2 != t1):
+    #             for i in range(len(clusters[t1])):
+    #                 for j in range(len(clusters[t2])):
+    #                     iteration += dis(clusters[t1][i],clusters[t2][j]) / (len(clusters[t1]) * len(clusters[t2]))
+        # inter_dis += (1 / ((1 + k) * k)) * iteration
+    h_score = intra_dis / inter_dis
 
+    return (k,h_score)
+
+def calculate_h_score_worker_callback(future, final_scores = []):
+    h_scores = future.result()
+    final_scores.append(h_scores)
+
+
+def calculate_h_score(start, end):
+    start_time = time.time()
+    final_scores = []
+    futures_ = []
+    # max_workers = mp.cpu_count()
+    max_workers = 6
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+
+        for k in range(start,end):
+        # for k in [5,10,15]:
+            future_ = executor.submit(calculate_h_score_worker, k)
+            future_.add_done_callback(functools.partial(calculate_h_score_worker_callback, final_scores = final_scores))
+            futures_.append(future_)
+
+        else:
+            concurrent.futures.wait(futures_)
+            executor.shutdown()
+            to_csv(final_scores,'./H_score.csv')
+            logger.info('processed in [%.2fs]' % ((time.time() - start_time)))
+
+fieldnames = ['h_score', 'k']
+def to_csv(h_scores, csv_output_file):
+        with open(csv_output_file, 'a', newline='', encoding='utf-8') as csv_f:
+            writer = csv.DictWriter(csv_f, fieldnames=fieldnames, delimiter=',', quoting=csv.QUOTE_ALL)
+            writer.writeheader()
+            for score in h_scores:
+                writer.writerow({
+                    'h_score': score[1],
+                    'k': score[0]})
 
 if __name__ == '__main__':
-    k = sys.argv[1]
+    start = sys.argv[1]
+    end = sys.argv[2]
     #step 1 generate clusters for gold standard
     # group_tweets_by_cluster_gold_standard('./intermediate_data/hpv_tweets/hpv_tweets_not_by_uid.txt', k)
 
@@ -179,10 +225,13 @@ if __name__ == '__main__':
     #step 3 generate pz_d manually for each document BTM
 
 
-    # #step 4 H score
-    k = int(k)
-    h_score = calculate_h_score(k)
-    with open('./H_score.txt', 'a') as f:
-        f.write(str(k) + ':')
-        f.write(str(h_score))
-        f.write('\n')
+    #step 4 H score single core
+    # k = int(k)
+    # h_score = calculate_h_score_worker(k)
+    # with open('./H_score.txt', 'a') as f:
+    #     f.write(str(k) + ':')
+    #     f.write(str(h_score))
+    #     f.write('\n')
+
+    #step 4 H score multi core
+    calculate_h_score(int(start),int(end))

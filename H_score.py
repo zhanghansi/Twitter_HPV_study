@@ -87,7 +87,7 @@ def generate_tweets_by_cluster_not_gold_standard(source, k):
         for line in topics_distribution:
             pz_ds = []
             temp = line.split(' ')[:k]
-            if 'nan' in temp:
+            if 'nan' in temp or '-nan' in temp:
                 continue
             for pz_d in temp:
                 pz_ds.append(float(pz_d))

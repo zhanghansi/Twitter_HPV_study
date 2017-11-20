@@ -29,7 +29,7 @@ geocoding/
 intermediate_data/
 intermediate_data.zip
 observation.txt
-
+output/
 
 
 # PyInstaller

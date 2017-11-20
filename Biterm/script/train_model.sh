@@ -1,15 +1,15 @@
 #!/bin/bash
 # run an toy example for BTM
 
-alpha=`echo "scale=3;1/$K"|bc`
-beta=0.01
-niter=500
-save_step=501
-
 end=14
 
 for ((K=12;K<=$end;K++))
     do
+        alpha=`echo "scale=3;1/$K"|bc`
+        beta=0.01
+        niter=500
+        save_step=501
+
         # input_dir=../../intermediate_data/LDA_BTM_comparison/
         input_dir=../sample-data/
         output_dir=../output/${K}tp/

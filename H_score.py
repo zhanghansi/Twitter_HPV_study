@@ -96,7 +96,7 @@ def generate_tweets_by_cluster_not_gold_standard(source, k):
     for pz_ds in tweets_pz_d:
         sorted_pz_ds = list(pz_ds)
         sorted_pz_ds.sort()
-        for i in range(3):
+        for i in range(1):
             topic_id = pz_ds.index(sorted_pz_ds[i])
             if topic_id not in results:
                 results[topic_id] = [pz_ds]

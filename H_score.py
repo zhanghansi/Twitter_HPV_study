@@ -163,15 +163,15 @@ def calculate_h_score_worker(k):
                 iteration += 2 * dis(clusters[t][i],clusters[t][j]) / (len(clusters[t]) * (len(clusters[t]) - 1))
         intra_dis += (1 / (k + 1)) * iteration
 
-    inter_dis = 1
-    # for t1 in range(k):
-    #     iteration = 0
-    #     for t2 in range(k):
-    #         if (t2 != t1):
-    #             for i in range(len(clusters[t1])):
-    #                 for j in range(len(clusters[t2])):
-    #                     iteration += dis(clusters[t1][i],clusters[t2][j]) / (len(clusters[t1]) * len(clusters[t2]))
-        # inter_dis += (1 / ((1 + k) * k)) * iteration
+    inter_dis = 0
+    for t1 in range(k):
+        iteration = 0
+        for t2 in range(k):
+            if (t2 != t1):
+                for i in range(len(clusters[t1])):
+                    for j in range(len(clusters[t2])):
+                        iteration += dis(clusters[t1][i],clusters[t2][j]) / (len(clusters[t1]) * len(clusters[t2]))
+        inter_dis += (1 / ((1 + k) * k)) * iteration
     h_score = intra_dis / inter_dis
 
     return (k,h_score)

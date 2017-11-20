@@ -157,7 +157,8 @@ def calculate_h_score_worker(k):
     logger.info(k)
     intra_dis = 0
     for t in range(k):
-       iteration = 0
+        logger.info(t)
+        iteration = 0
         for i in range(len(clusters[t])):
             for j in range(i+1,len(clusters[t])):
                 iteration += 2 * dis(clusters[t][i],clusters[t][j]) / (len(clusters[t]) * (len(clusters[t]) - 1))
@@ -165,6 +166,7 @@ def calculate_h_score_worker(k):
 
     inter_dis = 0
     for t1 in range(k):
+        logger.info(t1)
         iteration = 0
         for t2 in range(k):
             if (t2 != t1):
@@ -185,8 +187,8 @@ def calculate_h_score(start, end):
     start_time = time.time()
     final_scores = []
     futures_ = []
-    # max_workers = mp.cpu_count()
-    max_workers = 6
+    max_workers = mp.cpu_count()
+    # max_workers = 6
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
 
         for k in range(start,end):

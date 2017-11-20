@@ -157,7 +157,7 @@ def calculate_h_score_worker(k):
     logger.info(k)
     intra_dis = 0
     for t in range(k):
-        iteration = 0
+       iteration = 0
         for i in range(len(clusters[t])):
             for j in range(i+1,len(clusters[t])):
                 iteration += 2 * dis(clusters[t][i],clusters[t][j]) / (len(clusters[t]) * (len(clusters[t]) - 1))

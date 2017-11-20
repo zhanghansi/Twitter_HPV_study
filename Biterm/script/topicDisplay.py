@@ -5,7 +5,6 @@
 #    mat/pw_z.k20
 
 import sys
-import json
 
 # return:    {wid:w, ...}
 def read_voca(pt):
@@ -34,8 +33,6 @@ def dispTopics(pt, voca, pz):
     print('p(z)\t\tTop words')
     for pz, s in sorted(topics, reverse=True):
         print('%f\t%s' % (pz, s))
-    with open(sys.argv[1] + 'topic_keywords', 'w') as top_10:
-        json.dump(topics, top_10)
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:

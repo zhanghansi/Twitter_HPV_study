@@ -1,21 +1,20 @@
-#!/bin/sh
+#!/bin/bash
 # run an toy example for BTM
 
-K=12   # number of topics
+K=20   # number of topics
 
-alpha=`echo "scale=3;1/$K"|bc`
-beta=0.01
-niter=500
+alpha=`echo "scale=3;50/$K"|bc`
+beta=0.005
+niter=5
 save_step=501
 
 input_dir=../sample-data/
-# input_dir=../../intermediate_data/LDA_BTM_comparison/
-output_dir=../output/${K}tp/
+output_dir=../output/
 model_dir=${output_dir}model/
-mkdir -p $output_dir/model
+mkdir -p $output_dir/model 
 
 # the input docs for training
-doc_pt=${input_dir}hpv_tweets.txt
+doc_pt=${input_dir}doc_info.txt
 
 echo "=============== Index Docs ============="
 # docs after indexing

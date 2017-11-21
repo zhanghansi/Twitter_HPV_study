@@ -1,6 +1,6 @@
 #!/bin/bash
 # run an toy example for BTM
-for K in $(seq 11 11)
+for K in $(seq 31 34)
 do
     alpha=`echo "scale=3;1/$K"|bc`
     beta=0.01

@@ -82,7 +82,6 @@ def group_tweets_by_cluster_gold_standard(source, k):
 
 def generate_tweets_by_cluster_not_gold_standard(source, k):
     tweets_pz_d = []
-    print(source)
     with open(source + str(k) + 'tp/model/k' + str(k) + '.pz_d') as topics_distribution:
         for line in topics_distribution:
             pz_ds = []
@@ -217,7 +216,8 @@ if __name__ == '__main__':
     #step 1 generate clusters for gold standard
     # group_tweets_by_cluster_gold_standard('./intermediate_data/hpv_tweets/hpv_tweets_not_by_uid.txt', k)
 
-    # generate_tweets_by_cluster_not_gold_standard('./Biterm/output/',40)
+    # for k in range(5,36):
+    #     generate_tweets_by_cluster_not_gold_standard('./Biterm/output/',k)
 
 
     #step 2 generate word_id for BTM

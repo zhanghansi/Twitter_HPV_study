@@ -185,7 +185,7 @@ def calculate_h_score(start, end):
     final_scores = []
     futures_ = []
     # max_workers = mp.cpu_count()
-    max_workers = 6
+    max_workers = 4
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
 
         for k in range(start,end):

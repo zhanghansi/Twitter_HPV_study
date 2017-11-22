@@ -15,6 +15,7 @@ import time
 import pandas as pd
 import common
 import csv
+from sortedcontainers import SortedDict
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -79,18 +80,17 @@ def generate_corpus_for_quality_evaluation(k,pz_d,tweets):
 
     results = {}
     for j in range(len(tweets_pz_d)):
-        sorted_pz_ds = list(tweets_pz_d[j])
-        sorted_pz_ds.sort()
-        print(sorted_pz_ds)
-        print(tweets_pz_d[j])
-        quit()
-        for i in range(1):
-            topic_id = tweets_pz_d[j].index(sorted_pz_ds[i])
+        if 'nan' or '-nan' not in tweets_pz_d[j]:
+            sorted_pz_ds = list(tweets_pz_d[j])
+            sorted_pz_ds.sort(reverse = True)
+            topic_id = tweets_pz_d[j].index(sorted_pz_ds[0])
             if topic_id not in results:
-                results[topic_id] = [all_tweets[j]]
+                results[topic_id] = [{sorted_pz_ds[0] : all_tweets[j]}]
             else:
-                results[topic_id].append([all_tweets[j]])
-    print(len(results))
+                results[topic_id].append({sorted_pz_ds[0] : all_tweets[j]})
+
+    for tp in results:
+        logger.info(results[tp])
 
 if __name__ == "__main__":
 

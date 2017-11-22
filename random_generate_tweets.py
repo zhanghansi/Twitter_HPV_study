@@ -68,8 +68,8 @@ def random_generate_pz_d(input_folder, output_folder, k):
     for i in range(k):
         with open(input_folder + 'tp' + str(i) + '.pz_d') as f:
             lines = f.readlines()
-            if len(lines) > 1000:
-                samples_number = random.sample(range(1, len(lines)), 1000)
+            if len(lines) > 800:
+                samples_number = random.sample(range(1, len(lines)), 800)
                 result = []
                 for j in range(len(lines)):
                     if j in samples_number:
@@ -97,5 +97,5 @@ if __name__ == "__main__":
 
 
     # random generate pz_d for BTM
-    for k in range(21,36):
+    for k in range(5,36):
         random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)

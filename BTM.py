@@ -37,7 +37,7 @@ def read_voca(pt):
 
 def read_pz(pt):
     return [float(p) for p in open(pt).readline().split()]
-    
+
 # voca = {wid:w,...}
 def dispTopics(pt, voca, pz):
     k = 0
@@ -85,33 +85,52 @@ def generate_corpus_for_quality_evaluation(k,pz_d,tweets):
             sorted_pz_ds.sort(reverse = True)
             topic_id = tweets_pz_d[j].index(sorted_pz_ds[0])
             if topic_id not in results:
-                results[topic_id] = [{sorted_pz_ds[0] : all_tweets[j]}]
+                # results[topic_id] = [{sorted_pz_ds[0] : all_tweets[j]}]
+                results[topic_id] = [all_tweets[j]]
             else:
-                results[topic_id].append({sorted_pz_ds[0] : all_tweets[j]})
+                # results[topic_id].append({sorted_pz_ds[0] : all_tweets[j]})
+                results[topic_id].append(all_tweets[j])
 
+    final_result = {}
     for tp in results:
-        logger.info(results[tp])
+        temp = []
+        samples_number = random.sample(range(1, len(results[tp])), 10)
+        for i in samples_number:
+            temp.append(results[tp][i])
+        final_result[tp] = temp
+    to_csv(final_result, './intermediate_data/analysis/BTM/quality_evaluation/'+str(k) + 'tp.csv')
+
+fieldnames = ['topic_id', 'clean_text']
+def to_csv(results, csv_output_file):
+        with open(csv_output_file, 'a', newline='', encoding='utf-8') as csv_f:
+            writer = csv.DictWriter(csv_f, fieldnames=fieldnames, delimiter=',', quoting=csv.QUOTE_ALL)
+            writer.writeheader()
+            for tp in results:
+                for tweets in results[tp]:
+                    writer.writerow({
+                        'topic_id': tp,
+                        'clean_text': tweets})
 
 if __name__ == "__main__":
 
     logger.info(sys.version)
 
-    K = 7
+    for K in range(5,36):
 
-    model_dir = 'Biterm/output/%dtp/model/' % K
-    voca_pt = 'Biterm/output/%dtp/voca.txt' % K
-    voca = read_voca(voca_pt)
+        model_dir = 'Biterm/output/%dtp/model/' % K
+        voca_pt = 'Biterm/output/%dtp/voca.txt' % K
+        voca = read_voca(voca_pt)
 
-    pz_pt = model_dir + 'k%d.pz' % K
-    pz = read_pz(pz_pt)
+        pz_pt = model_dir + 'k%d.pz' % K
+        pz = read_pz(pz_pt)
 
-    zw_pt = model_dir + 'k%d.pw_z' %  K
-    topics = dispTopics(zw_pt, voca, pz)
+        zw_pt = model_dir + 'k%d.pw_z' %  K
+        topics = dispTopics(zw_pt, voca, pz)
 
-    tweets = 'Biterm/sample-data/hpv_tweets.txt'
-    pz_d = model_dir + 'k%d.pz_d' % K
-    # get wordcould figures
-    # wordcloud(topics, K)
+        tweets = 'Biterm/sample-data/hpv_tweets.txt'
+        pz_d = model_dir + 'k%d.pz_d' % K
+        # get wordcould figures
+        # wordcloud(topics, K)
 
-    # generate corpus for evaluating quality of K
-    generate_corpus_for_quality_evaluation(K,pz_d,tweets)
+        # generate corpus for evaluating quality of K
+        generate_corpus_for_quality_evaluation(K,pz_d,tweets)

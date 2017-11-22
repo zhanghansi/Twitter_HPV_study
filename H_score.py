@@ -95,7 +95,7 @@ def generate_tweets_by_cluster_not_gold_standard(source, k):
     results = {}
     for pz_ds in tweets_pz_d:
         sorted_pz_ds = list(pz_ds)
-        sorted_pz_ds.sort()
+        sorted_pz_ds.sort(reverse = True)
         for i in range(1):
             topic_id = pz_ds.index(sorted_pz_ds[i])
             if topic_id not in results:
@@ -211,12 +211,12 @@ def to_csv(h_scores, csv_output_file):
                     'k': score[0]})
 
 if __name__ == '__main__':
-    start = sys.argv[1]
-    end = sys.argv[2]
+    # start = sys.argv[1]
+    # end = sys.argv[2]
     #step 1 generate clusters for gold standard
     # group_tweets_by_cluster_gold_standard('./intermediate_data/hpv_tweets/hpv_tweets_not_by_uid.txt', k)
 
-    # for k in range(2,5):
+    # for k in range(40,41):
     #     generate_tweets_by_cluster_not_gold_standard('./Biterm/output/',k)
 
 
@@ -235,4 +235,4 @@ if __name__ == '__main__':
     #     f.write('\n')
 
     #step 4 H score multi core
-    calculate_h_score(int(start),int(end))
+    # calculate_h_score(int(start),int(end))

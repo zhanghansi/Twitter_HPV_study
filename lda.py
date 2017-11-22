@@ -392,20 +392,18 @@ if __name__ == "__main__":
     lda = gensim.models.ldamodel.LdaModel.load(MODEL)
 
     # wordcloud(lda.show_topics(num_topics=num_topics, formatted=False), './figures/%s'%(SOURCE))
-    # wordcloud(topics=lda.show_topics(num_topics=num_topics, formatted=False))
+    wordcloud(topics=lda.show_topics(num_topics=num_topics, formatted=False))
+    quit()
     # quit()
     # topics=lda.show_topics(num_topics=num_topics, num_words=10, formatted=False)
     # logger.info(topics)
     # to_csv_topic_stats(topics,'./intermediate_data/analysis/laypeople_topics_keywords_stats_15.csv')
 
-    # step 4: topic_annotation
+    # step 4: topic_annotation_LDA
     # topic_annotation(lda,dictionary,'./intermediate_data/laypeople/laypeople.csv','./intermediate_data/laypeople/15tp/annotation.csv', )
-    # topic_annotation(lda,dictionary,'./intermediate_data/promotional/promotional.csv','./intermediate_data/promotional/20tp/annotation.csv', )
 
-    #step 5: topic_distribution
+    #step 5: topic_distribution_LDA
     # topic_distribution(lda,dictionary,'./intermediate_data/promotional/promotional.csv', './intermediate_data/promotional/cutoffline/0.085.csv')
-    # topic_distribution(lda,dictionary,'./intermediate_data/laypeople/laypeople.csv','./intermediate_data/laypeople/20tp_cutoffline/0.3all.csv', )
-    # topic_distribution(lda,dictionary,'./intermediate_data/hpv_tweets/random_100.csv','./intermediate_data/hpv_tweets/cutoffline/0.15_30tp.csv', )
 
     #step 6: infer p(z|d) for each doc
     infer_pz_d(num_topics,lda,dictionary,'./intermediate_data/LDA_BTM_comparison/sample_cluster_csv/','./intermediate_data/LDA_BTM_comparison/LDA/topics_distribution_cluster/')

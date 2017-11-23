@@ -18,17 +18,19 @@ import common
 import random
 
 # fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id','class','is_quote_status']
-fieldnames = ['clean_text']
+fieldnames = ['clean_text', 'us_state','preprocessed_text']
 def to_csv(tweets, csv_output_file):
         with open(csv_output_file, 'w', newline='', encoding='utf-8') as csv_f:#, open(txt_output_file, 'w', newline='', encoding='utf-8') as txt_f:
             writer = csv.DictWriter(csv_f, fieldnames=fieldnames, delimiter=',', quoting=csv.QUOTE_ALL)
             writer.writeheader()
             for tweet in tweets:
-
-                writer.writerow({'clean_text': tweet.split('\n')[0]})
+                writer.writerow({
+                    'clean_text': tweet['clean_text'],
+                    'us_state': tweet['us_state'],
+                    'preprocessed_text': tweet['preprocessed_text']})
 
 def random_generate_tweets_cvs(input_file,output_file):
-    samples_number = random.sample(range(1, 271533), 1000)
+    samples_number = random.sample(range(1, 271533), 50)
     logger.info(samples_number)
     sample_data = []
     result = []
@@ -40,7 +42,6 @@ def random_generate_tweets_cvs(input_file,output_file):
     for i in samples_number:
         result.append(sample_data[i])
 
-    # fieldnames = ['id', 'text', 'clean_text', 'place', 'user_location', 'us_state', 'created_at', 'username', 'user_id', 'class', 'is_quote_status', 'topic']
     to_csv(result,output_file)
 
 def random_generate_tweets_txt(k):
@@ -88,14 +89,14 @@ if __name__ == "__main__":
     logger.info(sys.version)
 
     #random generate tweets
-    # random_generate_tweets_cvs('./intermediate_data/hpv_tweets/hpv_tweets.csv','./intermediate_data/hpv_tweets/random_100.csv')
+    random_generate_tweets_cvs('./intermediate_data/preprocessed_text_and_geo.csv','./intermediate_data/analysis/BTM/cutoffline_annotation/random_50.csv')
 
 
-    # random generate tweets for BTM
+    # random generate tweets for BTM and LDA comparision
     # k = 11
     # random_generate_tweets_txt(k)
 
 
     # random generate pz_d for BTM
-    for k in range(5,36):
-        random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)
+    # for k in range(5,36):
+    #     random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)

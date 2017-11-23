@@ -153,7 +153,6 @@ def calculate_h_score_worker(k):
                     temp.append(float(p))
                 cluster.append(temp)
         clusters.append(cluster)
-    logger.info(k)
     intra_dis = 0
     for t in range(k):
         iteration = 0
@@ -173,6 +172,8 @@ def calculate_h_score_worker(k):
         inter_dis += (1 / ((1 + k) * k)) * iteration
     # h_score = intra_dis / inter_dis
     h_score = np.divide(intra_dis, inter_dis)
+    logger.info(k)
+    logger.info(h_score)
     return (k,h_score)
 
 def calculate_h_score_worker_callback(future, final_scores = []):

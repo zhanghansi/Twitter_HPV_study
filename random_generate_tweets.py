@@ -30,7 +30,7 @@ def to_csv(tweets, csv_output_file):
                     'preprocessed_text': tweet['preprocessed_text']})
 
 def random_generate_tweets_cvs(input_file,output_file):
-    samples_number = random.sample(range(1, 271533), 50)
+    samples_number = random.sample(range(1, 271533), 100)
     logger.info(samples_number)
     sample_data = []
     result = []
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     logger.info(sys.version)
 
     #random generate tweets
-    random_generate_tweets_cvs('./intermediate_data/preprocessed_text_and_geo.csv','./intermediate_data/analysis/BTM/cutoffline_annotation/random_50.csv')
+    # random_generate_tweets_cvs('./intermediate_data/preprocessed_text_and_geo.csv','./intermediate_data/analysis/BTM/cutoffline_annotation/random_100.csv')
 
 
     # random generate tweets for BTM and LDA comparision
@@ -98,5 +98,5 @@ if __name__ == "__main__":
 
 
     # random generate pz_d for BTM
-    # for k in range(5,36):
-    #     random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)
+    # for k in range(5,8):
+        # random_generate_pz_d('./intermediate_data/BTM/tp' + str(k) + '_clusters/','./sample_clusters_for_best_number_topics/tp' + str(k) + '_clusters/',k)

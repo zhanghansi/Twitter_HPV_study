@@ -16,6 +16,7 @@ import pandas as pd
 import ftfy
 import common
 import csv
+import codecs
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -91,23 +92,24 @@ def extract_text_for_BTM_topic_distribution(source, output_file):
         clean_text = common.cleanhtml(common.remove_hashtag_sign(common.remove_username(common.remove_url(ftfy.fix_text(row['text'])))))
         preprocessed_text = ''
         temp = [wordnet_lemmatizer.lemmatize(word.lower()) for word in nltk.regexp_tokenize(clean_text, pattern) if wordnet_lemmatizer.lemmatize(word.lower()) not in stoplist]
+        if len(temp) == 0:
+            continue
         for word in temp:
             preprocessed_text += word + ' '
         tweet['clean_text'] = clean_text
         tweet['us_state'] = row['us_state']
         tweet['preprocessed_text'] = preprocessed_text
         tweets.append(tweet)
+    logger.info(len(tweets))
     to_csv(tweets,output_file)
 
 
 def transfer_csv_txt(csv_f,txt_file):
     txt = []
-    df = pd.read_csv(csv_f,encoding='utf-8')
-    for index, row in df.iterrows():
-        txt.append(row['preprocessed_text'])
-    with open(txt_file, 'w') as outfile:
-        for l in txt:
-            outfile.write(l + '\n')
+    df = pd.read_csv(csv_f, encoding='utf-8')
+    with open(txt_file, 'w', encoding='utf-8') as outfile:
+        for index, row in df.iterrows():
+            outfile.write(row['preprocessed_text'] + '\n')
 
 if __name__ == "__main__":
 
@@ -125,4 +127,5 @@ if __name__ == "__main__":
     # extract_text_for_BTM_topic_distribution('./intermediate_data/hpv_geotagged.csv', './intermediate_data/preprocessed_text_and_geo.csv')
 
     #transfer csv to txt
-    transfer_csv_txt('./intermediate_data/analysis/BTM/cutoffline_annotation/random_50.csv', './intermediate_data/analysis/BTM/cutoffline_annotation/random_50.txt')
+    transfer_csv_txt('./intermediate_data/analysis/BTM/cutoffline_annotation/random_100.csv', './intermediate_data/analysis/BTM/cutoffline_annotation/random_100.txt')
+    # transfer_csv_txt('./intermediate_data/preprocessed_text_and_geo.csv', './intermediate_data/preprocessed_text_and_geo.txt')

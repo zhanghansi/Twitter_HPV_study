@@ -47,7 +47,7 @@ Our data sets are saved on s3 (`s3://ji0ng.bi0n.twitter/hpv/`) collected from 3 
         * number of tweets without duplciates: 1811215
         * number of English tweets: 1277853
         * number of tweets after removing clean_text equals to '' or 'RT': 1274530
-        * number of tweets after geo-coding: 271533
+        * number of tweets after geo-coding: 270369
 
 * Rule-based categorization
     * `classifier.py`: classify the rest of the tweets into `promotional HPV related` (205,945 tweets) and `laypeople's discussions` (65,588 tweets)
